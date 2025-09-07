@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import MinisterDetail from "./pages/MinisterDetail";
 import History from "./pages/History";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           <Route path="/admin" element={<Admin session={session} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/minister/:ministerId" element={<MinisterDetail />} />
         </Routes>
       </main>
       <Footer />
