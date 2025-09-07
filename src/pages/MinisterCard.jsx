@@ -25,33 +25,34 @@ const MinisterCard = ({ minister, session, onRatingSuccess, userRating }) => {
       }
     }
     setHasRated(isRated);
-  }, [minister.id, session, userRating, isEditing]);
+  }, [minister.id, session, userRating, isEditing, onRatingSuccess]);
 
-  const handleRatingSuccess = () => {
+  const handleRatingSuccess = (update) => {
     setHasRated(true);
-    onRatingSuccess();
+    onRatingSuccess(update);
     setIsModalOpen(false);
   };
 
   const handleUpdateRating = async (newRating) => {
-    if (!session) {
-      toast.error("You must be logged in to update your rating.");
-      return;
-    }
     setIsSubmitting(true);
-    const { error } = await supabase
-      .from("ratings")
-      .update({ rating: newRating })
-      .eq("user_id", session.user.id)
-      .eq("minister_id", minister.id);
+    try {
+      const { data, error } = await supabase.rpc("rate_minister", {
+        p_minister_id: minister.id,
+        p_rating: newRating,
+        p_user_id: session.user.id,
+      });
 
-    if (error) {
-      toast.error("Failed to update rating.");
-      console.error("Error updating rating:", error);
-    } else {
+      if (error) throw error;
+
       toast.success("Rating updated successfully!");
-      // Trigger a full refresh to get new average ratings
-      onRatingSuccess();
+      onRatingSuccess({
+        ministerId: minister.id,
+        newAverage: data[0].new_average_rating,
+        newCount: data[0].new_rating_count,
+        userRating: newRating,
+      });
+    } catch (error) {
+      toast.error(error.message || "Failed to update rating.");
     }
     setIsEditing(false);
     setIsSubmitting(false);

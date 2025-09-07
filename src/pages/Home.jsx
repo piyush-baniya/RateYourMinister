@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import MinisterCard from "./MinisterCard";
 import Spinner from "./Spinner";
+import WelcomePopup from "./WelcomePopup";
 
 const Home = ({ session }) => {
   const [ministers, setMinisters] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [userRatings, setUserRatings] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
   const [sortBy, setSortBy] = useState("count_desc");
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -80,7 +82,7 @@ const Home = ({ session }) => {
   // Effect to fetch data when filters or page change
   useEffect(() => {
     fetchMinisters();
-  }, [fetchMinisters]);
+  }, [searchTerm, sortBy, page, session]);
 
   // Effect to reset and fetch when search/sort changes
   useEffect(() => {
@@ -90,13 +92,38 @@ const Home = ({ session }) => {
     setHasMore(true);
   }, [searchTerm, sortBy]);
 
+  // Effect to decide whether to show the popup
+  useEffect(() => {
+    const hasSeenPopup = sessionStorage.getItem("hasSeenWelcomePopup");
+    if (!hasSeenPopup) {
+      setShowPopup(true);
+    }
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    sessionStorage.setItem("hasSeenWelcomePopup", "true");
+  };
+
   // Callback for when a rating is successful
-  const handleRatingSuccess = () => {
-    // Reset and refetch to show updated ratings
-    setMinisters([]);
-    setUserRatings({});
-    setPage(0);
-    setHasMore(true);
+  const handleRatingSuccess = (update) => {
+    // Update the specific minister's card without a full refetch
+    setMinisters((prevMinisters) =>
+      prevMinisters.map((minister) => {
+        if (minister.id === update.ministerId) {
+          return {
+            ...minister,
+            average_rating: update.newAverage,
+            rating_count: update.newCount,
+          };
+        }
+        return minister;
+      })
+    );
+    setUserRatings((prev) => ({
+      ...prev,
+      [update.ministerId]: update.userRating,
+    }));
   };
 
   // Infinite scroll observer
@@ -117,6 +144,7 @@ const Home = ({ session }) => {
 
   return (
     <div className="container mx-auto px-4">
+      {showPopup && <WelcomePopup onClose={handleClosePopup} />}
       <div className="text-center py-8 md:py-16 mb-8 md:mb-12 bg-gradient-to-br from-indigo-900/80 via-purple-900/70 to-gray-900/80 rounded-xl shadow-2xl border border-white/10">
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-3 tracking-tight">
           Rate Nepal's Ministers

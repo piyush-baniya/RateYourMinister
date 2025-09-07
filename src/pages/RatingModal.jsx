@@ -12,15 +12,16 @@ const RatingModal = ({ minister, session, onClose, onSuccess }) => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.rpc("rate_minister", {
-      p_minister_id: minister.id,
-      p_rating: rating,
-      p_user_id: session?.user?.id || null,
-    });
 
-    if (error) {
-      toast.error(error.message);
-    } else {
+    try {
+      const { data, error } = await supabase.rpc("rate_minister", {
+        p_minister_id: minister.id,
+        p_rating: rating,
+        p_user_id: session?.user?.id || null,
+      });
+
+      if (error) throw error;
+
       toast.success("Thank you for your rating!");
       if (!session) {
         const ratedMinisters =
@@ -30,10 +31,19 @@ const RatingModal = ({ minister, session, onClose, onSuccess }) => {
           JSON.stringify([...ratedMinisters, minister.id])
         );
       }
-      onSuccess();
+      // Pass the new rating data and the user's own rating back
+      onSuccess({
+        ministerId: minister.id,
+        newAverage: data[0].new_average_rating,
+        newCount: data[0].new_rating_count,
+        userRating: session ? rating : null, // only pass userRating for logged in users
+      });
       onClose();
+    } catch (error) {
+      toast.error(error.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

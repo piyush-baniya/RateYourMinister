@@ -51,12 +51,11 @@ const About = () => {
               Disclaimer
             </h2>
             <p className="text-gray-300 leading-relaxed bg-gray-900 p-4 rounded-md border-l-4 border-yellow-500">
-              <span className="font-bold">Please Note:</span> This website is a
-              portfolio project created for fun and educational purposes. The
-              ratings and reviews on this platform are based on public opinion
-              and do not represent official performance evaluations. It is
-              intended to be a demonstration of web development skills and to
-              encourage civic engagement in a playful manner.
+              <span className="font-bold">Please Note:</span> This website is
+              created for fun and educational purposes. The ratings and reviews
+              on this platform are based on public opinion and do not represent
+              official performance evaluations. It is intended to encourage
+              civic engagement in a playful manner.
             </p>
           </div>
         </div>

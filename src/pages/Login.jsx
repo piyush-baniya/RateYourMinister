@@ -11,6 +11,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
       setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({

@@ -12,28 +12,48 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
 
-    if (error) {
-      toast.error(error.message);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    // If the user is anonymous, update their account to a permanent one
+    if (session?.user?.is_anonymous) {
+      const { error } = await supabase.auth.updateUser({
+        email,
+        password,
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created successfully! You are now logged in.");
+        navigate("/");
+      }
     } else {
-      toast.success("Account created! Please check your email to verify.");
-      navigate("/");
+      // Otherwise, perform a regular sign-up
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! Please check your email to verify.");
+        navigate("/");
+      }
     }
+
     setLoading(false);
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8">
+    <div className="max-w-md mx-auto mt-8 p-4">
       <form
         onSubmit={handleSignup}
-        className="bg-gray-800 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+        className="bg-gray-900/70 backdrop-blur-sm shadow-2xl rounded-lg px-8 pt-6 pb-8 mb-4 border border-gray-700"
       >
         <h2 className="text-2xl text-white font-bold mb-6 text-center">
-          Create Account
+          Sign Up
         </h2>
         <div className="mb-4">
           <label
@@ -47,7 +67,7 @@ const Signup = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full bg-gray-800 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700"
             required
           />
         </div>
@@ -63,21 +83,21 @@ const Signup = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full bg-gray-800 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700"
             required
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-indigo-400"
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-purple-400 transition-colors"
         >
-          {loading ? "Creating Account..." : "Sign Up"}
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
         <p className="text-center text-gray-400 text-sm mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-400 hover:text-indigo-300">
-            Login
+          <Link to="/login" className="text-purple-400 hover:text-purple-300">
+            Log In
           </Link>
         </p>
       </form>
