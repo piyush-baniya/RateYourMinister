@@ -7,7 +7,7 @@ const Home = ({ session }) => {
   const [ministers, setMinisters] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [userRatings, setUserRatings] = useState({});
-  const [sortBy, setSortBy] = useState("name_asc");
+  const [sortBy, setSortBy] = useState("count_desc");
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
@@ -49,7 +49,14 @@ const Home = ({ session }) => {
     // Apply sorting
     const [orderBy, orderDirection] = sortBy.split("_");
     const isAscending = orderDirection === "asc";
-    query = query.order(orderBy === "rating" ? "average_rating" : "name", {
+    let sortColumn = "name";
+    if (orderBy === "rating") {
+      sortColumn = "average_rating";
+    } else if (orderBy === "count") {
+      sortColumn = "rating_count";
+    }
+
+    query = query.order(sortColumn, {
       ascending: isAscending,
     });
 
@@ -110,7 +117,7 @@ const Home = ({ session }) => {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="text-center py-8 md:py-16 mb-8 md:mb-12 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl shadow-2xl">
+      <div className="text-center py-8 md:py-16 mb-8 md:mb-12 bg-gradient-to-br from-indigo-900/80 via-purple-900/70 to-gray-900/80 rounded-xl shadow-2xl border border-white/10">
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-3 tracking-tight">
           Rate Nepal's Ministers
         </h1>
@@ -120,7 +127,7 @@ const Home = ({ session }) => {
       </div>
 
       {/* Search and Filter Controls */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 sticky top-4 z-10 bg-gray-900/80 backdrop-blur-sm p-4 rounded-lg">
+      <div className="flex flex-col md:flex-row gap-4 mb-8 sticky top-4 z-10 bg-gray-900/70 backdrop-blur-sm p-4 rounded-lg border border-gray-700">
         <div className="relative w-full sm:w-1/2 lg:w-1/3">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
@@ -139,19 +146,20 @@ const Home = ({ session }) => {
           <input
             type="text"
             placeholder="Search by name or party..."
-            className="w-full bg-gray-700 text-white placeholder-gray-400 border border-gray-600 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-gray-800 text-white placeholder-gray-400 border border-gray-700 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <select
-          className="w-full sm:w-auto bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
-          <option value="name_asc">Sort by Name (A-Z)</option>
-          <option value="name_desc">Sort by Name (Z-A)</option>
+          <option value="count_desc">Sort by Most Rated</option>
           <option value="rating_desc">Sort by Highest Rated</option>
           <option value="rating_asc">Sort by Lowest Rated</option>
+          <option value="name_asc">Sort by Name (A-Z)</option>
+          <option value="name_desc">Sort by Name (Z-A)</option>
         </select>
       </div>
 

@@ -74,7 +74,7 @@ const MinisterCard = ({ minister, session, onRatingSuccess, userRating }) => {
           />
           {minister.average_rating >= 4 && (
             <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg transform group-hover:scale-110 transition-transform">
-              Highly Rated
+              Citizen's Choice
             </div>
           )}
           <div className="absolute bottom-0 left-0 right-0 h-1.5">

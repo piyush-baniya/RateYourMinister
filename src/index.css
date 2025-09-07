@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+body {
+    @apply bg-gray-900 text-gray-200;
+    background-color: #0c0a18;
+    /* A deep, dark purple as a fallback */
+    background-image: linear-gradient(160deg, rgba(56, 1, 128, 0.2) 0%, rgba(18, 16, 38, 0) 50%);
+    background-attachment: fixed;
+    background-size: cover;
+}

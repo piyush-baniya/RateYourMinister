@@ -35,7 +35,7 @@ const Login = () => {
     <div className="max-w-md mx-auto mt-8 p-4">
       <form
         onSubmit={handleLogin}
-        className="bg-gray-800 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+        className="bg-gray-900/70 backdrop-blur-sm shadow-2xl rounded-lg px-8 pt-6 pb-8 mb-4 border border-gray-700"
       >
         <h2 className="text-2xl text-white font-bold mb-6 text-center">
           Login
@@ -52,7 +52,7 @@ const Login = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full bg-gray-800 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700"
             required
           />
         </div>
@@ -68,20 +68,20 @@ const Login = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full bg-gray-800 text-white rounded py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700"
             required
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-indigo-400"
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-purple-400 transition-colors"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
         <p className="text-center text-gray-400 text-sm mt-4">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-indigo-400 hover:text-indigo-300">
+          <Link to="/signup" className="text-purple-400 hover:text-purple-300">
             Sign Up
           </Link>
         </p>
